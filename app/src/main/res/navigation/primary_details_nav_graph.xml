@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/articles_list_fragment">
+
+    <fragment
+        android:id="@+id/articles_list_fragment"
+        android:name="com.example.articlesviewerapp.ui.ArticlesListFragment"
+        android:label="NY Times Most Popular Articles"
+        tools:layout="@layout/fragment_articles_list">
+        <action
+            android:id="@+id/show_article_detail"
+            app:destination="@id/article_detail_fragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/article_detail_fragment"
+        android:name="com.example.articlesviewerapp.ui.ArticleDetailFragment"
+        android:label="Article Detail"
+        tools:layout="@layout/fragment_article_detail">
+        <argument
+            android:name="article_id"
+            android:defaultValue=""
+            app:argType="string" />
+    </fragment>
+</navigation>
