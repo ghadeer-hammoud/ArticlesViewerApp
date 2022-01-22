@@ -10,7 +10,7 @@
         android:label="Article Detail"
         tools:layout="@layout/fragment_article_detail">
         <argument
-            android:name="item_id"
+            android:name="article_id"
             android:defaultValue=""
             app:argType="string" />
     </fragment>

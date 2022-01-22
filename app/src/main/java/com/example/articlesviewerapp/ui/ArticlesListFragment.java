@@ -1,11 +1,13 @@
 package com.example.articlesviewerapp.ui;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.bumptech.glide.RequestManager;
@@ -32,12 +34,11 @@ import dagger.android.support.DaggerFragment;
 
 public class ArticlesListFragment extends DaggerFragment implements ArticlesRecyclerAdapter.OnListItemClickedListener {
 
-
-
     private FragmentArticlesListBinding binding;
     private View itemDetailFragmentContainer;
 
     private RecyclerView recyclerView;
+    private ProgressBar progressBar;
     private ArticlesRecyclerAdapter mAdapter;
     private ArticlesViewModel viewModel;
     @Inject
@@ -48,6 +49,7 @@ public class ArticlesListFragment extends DaggerFragment implements ArticlesRecy
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
+        viewModel = ViewModelProviders.of(getActivity(), providerFactory).get(ArticlesViewModel.class);
         binding = FragmentArticlesListBinding.inflate(inflater, container, false);
         return binding.getRoot();
 
@@ -60,6 +62,7 @@ public class ArticlesListFragment extends DaggerFragment implements ArticlesRecy
         setHasOptionsMenu(true);
 
         recyclerView = binding.recyclerView;
+        progressBar = binding.progressBar;
         itemDetailFragmentContainer = view.findViewById(R.id.item_detail_nav_container);
 
         init();
@@ -68,8 +71,9 @@ public class ArticlesListFragment extends DaggerFragment implements ArticlesRecy
     private void init() {
 
         setupRecyclerView();
-        viewModel = ViewModelProviders.of(this, providerFactory).get(ArticlesViewModel.class);
+
         subscribeObservers();
+
     }
 
     private void setupRecyclerView() {
@@ -89,16 +93,16 @@ public class ArticlesListFragment extends DaggerFragment implements ArticlesRecy
                 if(listResource != null){
                     switch (listResource.status){
                         case LOADING:{
-                            //showProgressBar();
+                            showLoading(true);
                             break;
                         }
                         case SUCCESS:{
-                            //hideProgressBar();
+                            showLoading(false);
                             mAdapter.setArticles(listResource.data);
                             break;
                         }
                         case ERROR:{
-                            //hideProgressBar();
+                            showLoading(false);
                             Toast.makeText(getActivity(), listResource.message, Toast.LENGTH_SHORT).show();
                             break;
                         }
@@ -132,6 +136,17 @@ public class ArticlesListFragment extends DaggerFragment implements ArticlesRecy
                     .navigate(R.id.fragment_article_detail, arguments);
         } else {
             Navigation.findNavController(itemView).navigate(R.id.show_article_detail, arguments);
+        }
+    }
+
+    private void showLoading(boolean isLoading){
+        if (isLoading){
+            progressBar.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.GONE);
+        }
+        else{
+            progressBar.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
         }
     }
 }

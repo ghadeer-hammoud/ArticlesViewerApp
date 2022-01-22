@@ -1,5 +1,7 @@
 package com.example.articlesviewerapp.viewmodels;
 
+import android.util.Log;
+
 import com.example.articlesviewerapp.Resource;
 import com.example.articlesviewerapp.models.Article;
 import com.example.articlesviewerapp.repositories.ArticlesRepository;
@@ -22,6 +24,7 @@ public class ArticleDetailsViewModel extends ViewModel {
     @Inject
     public ArticleDetailsViewModel(ArticlesRepository articlesRepository) {
         this.articlesRepository = articlesRepository;
+        Log.d("ghadeer", "ArticleDetailsViewModel: ViewModel Created");
     }
 
 

@@ -3,25 +3,20 @@ package com.example.articlesviewerapp.ui;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 
-import androidx.appcompat.view.ContextThemeWrapper;
+import androidx.annotation.Dimension;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import dagger.android.support.DaggerFragment;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageSwitcher;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.ViewSwitcher;
+import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.example.articlesviewerapp.R;
 import com.example.articlesviewerapp.Resource;
@@ -29,6 +24,7 @@ import com.example.articlesviewerapp.databinding.FragmentArticleDetailBinding;
 import com.example.articlesviewerapp.di.ViewModelProviderFactory;
 import com.example.articlesviewerapp.models.Article;
 import com.example.articlesviewerapp.viewmodels.ArticleDetailsViewModel;
+import com.google.android.flexbox.FlexboxLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 
 import javax.inject.Inject;
@@ -40,6 +36,7 @@ public class ArticleDetailFragment extends DaggerFragment {
     private CollapsingToolbarLayout mToolbarLayout;
     private ImageView ivImage;
     private TextView tvTitle, tvType, tvSection, tvByline, tvPublishedDate, tvUpdated, tvAbstract, tvSource, tvSeeOriginal;
+    private FlexboxLayout layoutKeywords;
 
     private FragmentArticleDetailBinding binding;
 
@@ -76,9 +73,10 @@ public class ArticleDetailFragment extends DaggerFragment {
         tvAbstract = binding.tvAbstract;
         tvSource = binding.tvSource;
         tvSeeOriginal = binding.tvSeeOriginal;
+        layoutKeywords = binding.layoutKeywords;
 
 
-        viewModel = ViewModelProviders.of(this, providerFactory).get(ArticleDetailsViewModel.class);
+        viewModel = ViewModelProviders.of(getActivity(), providerFactory).get(ArticleDetailsViewModel.class);
         if (getArguments().containsKey(ARG_ARTICLE_ID)) {
             subscribeObservers();
         }
@@ -141,6 +139,23 @@ public class ArticleDetailFragment extends DaggerFragment {
                 startActivity(intent);
             }
         });
+
+        String[] keywords = article.getAdxKeywords().split(";");
+        for(String keyword : keywords){
+            TextView tv = new TextView(getActivity(), null, 0, R.style.Pill_Green_Small);
+            FlexboxLayout.LayoutParams lp = new FlexboxLayout.LayoutParams(FlexboxLayout.LayoutParams.WRAP_CONTENT, FlexboxLayout.LayoutParams.WRAP_CONTENT);
+            lp.setMargins(1, 1, 1, 1);
+            tv.setLayoutParams(lp);
+            tv.setText(keyword);
+            tv.setTextSize(Dimension.SP, 12);
+            /*if (Build.VERSION.SDK_INT < 23) {
+                tv.setTextAppearance(getActivity(), R.style.Pill_Green_Small);
+            }
+            else {
+                tv.setTextAppearance(R.style.Pill_Green_Small);
+            }*/
+            layoutKeywords.addView(tv);
+        }
 
         if(article.getMedia().size() > 0)
             glideInstance.load(article.getMedia().get(0).getMediaMetadata().get(2).getUrl()).into(ivImage);

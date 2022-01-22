@@ -56,6 +56,31 @@
 
             </LinearLayout>
 
+             <TextView
+                style="?android:attr/textAppearanceSmall"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingStart="@dimen/container_horizontal_margin"
+                android:paddingTop="16dp"
+                android:paddingEnd="@dimen/container_horizontal_margin"
+                android:paddingBottom="8dp"
+                android:textIsSelectable="true"
+                android:textColor="@android:color/black"
+                android:text="KEYWORDS "/>
+
+
+            <com.google.android.flexbox.FlexboxLayout
+                android:id="@+id/layoutKeywords"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/container_horizontal_margin"
+                android:paddingEnd="@dimen/container_horizontal_margin"
+                app:flexWrap="wrap"
+                app:flexDirection="row">
+
+
+            </com.google.android.flexbox.FlexboxLayout>
+
 
             <RelativeLayout
                 android:layout_width="match_parent"
