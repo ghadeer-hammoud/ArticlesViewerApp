@@ -14,6 +14,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +28,7 @@ import com.example.articlesviewerapp.models.Article;
 import com.example.articlesviewerapp.viewmodels.ArticleDetailsViewModel;
 import com.google.android.flexbox.FlexboxLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import javax.inject.Inject;
 
@@ -37,6 +40,10 @@ public class ArticleDetailFragment extends DaggerFragment {
     private ImageView ivImage;
     private TextView tvTitle, tvType, tvSection, tvByline, tvPublishedDate, tvUpdated, tvAbstract, tvSource, tvSeeOriginal;
     private FlexboxLayout layoutKeywords;
+    private LinearLayout mainLayout;
+    private TextView tvMessage;
+    private ProgressBar progressBar;
+    private FloatingActionButton fabSave;
 
     private FragmentArticleDetailBinding binding;
 
@@ -74,11 +81,21 @@ public class ArticleDetailFragment extends DaggerFragment {
         tvSource = binding.tvSource;
         tvSeeOriginal = binding.tvSeeOriginal;
         layoutKeywords = binding.layoutKeywords;
+        mainLayout = binding.mainLayout;
+        tvMessage = binding.tvMessage;
+        progressBar = binding.progressBar;
+        fabSave = binding.fabSave;
 
 
         viewModel = ViewModelProviders.of(getActivity(), providerFactory).get(ArticleDetailsViewModel.class);
         if (getArguments().containsKey(ARG_ARTICLE_ID)) {
-            subscribeObservers();
+            if(getArguments().getString(ARG_ARTICLE_ID) != null && !getArguments().getString(ARG_ARTICLE_ID).isEmpty())
+                subscribeObservers();
+            else{
+                showProgressBar(false);
+                showMainLayout(false);
+                showTextMessage(true, "Click  item to show.");
+            }
         }
 
         return rootView;
@@ -88,6 +105,20 @@ public class ArticleDetailFragment extends DaggerFragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    private void showProgressBar(boolean isVisible){
+        progressBar.setVisibility(isVisible ? View.VISIBLE : View.GONE);
+    }
+
+    private void showTextMessage(boolean isVisible, String message){
+        tvMessage.setVisibility(isVisible ? View.VISIBLE : View.GONE);
+        tvMessage.setText(isVisible ? message : "");
+    }
+
+    private void showMainLayout(boolean isVisible){
+        mainLayout.setVisibility(isVisible ? View.VISIBLE : View.GONE);
+        fabSave.setVisibility(isVisible ? View.VISIBLE : View.GONE);
     }
 
 
@@ -100,18 +131,23 @@ public class ArticleDetailFragment extends DaggerFragment {
                 if(articleResource != null){
                     switch (articleResource.status){
                         case LOADING:{
-                            //showProgressBar();
+                            showProgressBar(true);
+                            showMainLayout(false);
+                            showTextMessage(false, "");
                             break;
                         }
                         case SUCCESS:{
-                            //hideProgressBar();
+                            showProgressBar(false);
+                            showMainLayout(true);
+                            showTextMessage(false, "");
                             populateData(articleResource.data);
 
                             break;
                         }
                         case ERROR:{
-                            //hideProgressBar();
-                            //mTextView.setText(articleResource.message);
+                            showProgressBar(false);
+                            showMainLayout(false);
+                            showTextMessage(true, articleResource.message);
                             break;
                         }
                     }
@@ -121,6 +157,10 @@ public class ArticleDetailFragment extends DaggerFragment {
     }
 
     private void populateData(Article article){
+
+        mainLayout.setVisibility(View.VISIBLE);
+        fabSave.setVisibility(View.VISIBLE);
+        tvMessage.setVisibility(View.GONE);
 
         mToolbarLayout.setTitle(article.getTitle());
         tvTitle.setText(article.getTitle());

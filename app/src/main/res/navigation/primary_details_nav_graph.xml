@@ -8,8 +8,7 @@
     <fragment
         android:id="@+id/articles_list_fragment"
         android:name="com.example.articlesviewerapp.ui.ArticlesListFragment"
-        android:label="NY Times Most Popular Articles"
-        tools:layout="@layout/fragment_articles_list">
+        android:label="NY Times Most Popular Articles">
         <action
             android:id="@+id/show_article_detail"
             app:destination="@id/article_detail_fragment" />
